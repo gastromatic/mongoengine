@@ -1176,7 +1176,6 @@ class ReferenceField(BaseField):
     @staticmethod
     def _lazy_load_ref(ref_cls, dbref):
         dereferenced_son = ref_cls._get_db().dereference(dbref)
-        print(dereferenced_son, flush=True)
         if dereferenced_son is None:
             return None
 
@@ -1201,7 +1200,7 @@ class ReferenceField(BaseField):
 
             value = self._lazy_load_ref(cls, ref_value)
             if value is not None:
-                instance._data[self.name] = cls._from_son(value)
+                instance._data[self.name] = value
                 
         return super().__get__(instance, owner)
 
