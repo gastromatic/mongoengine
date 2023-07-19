@@ -1177,7 +1177,7 @@ class ReferenceField(BaseField):
     def _lazy_load_ref(ref_cls, dbref):
         dereferenced_son = ref_cls._get_db().dereference(dbref)
         if dereferenced_son is None:
-            raise DoesNotExist(f"Trying to dereference unknown document {dbref}")
+            return None
 
         return ref_cls._from_son(dereferenced_son)
 
@@ -1198,8 +1198,10 @@ class ReferenceField(BaseField):
             else:
                 cls = self.document_type
 
-            instance._data[self.name] = self._lazy_load_ref(cls, ref_value)
-
+            value = self._lazy_load_ref(cls, ref_value)
+            if value is not None:
+                instance._data[self.name] = cls._from_son(value)
+                
         return super().__get__(instance, owner)
 
     def to_mongo(self, document):
